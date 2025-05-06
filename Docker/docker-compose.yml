@@ -1,0 +1,17 @@
+name: sika
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlserver_container
+    ports:
+      - "1433:1433"
+    volumes:
+      - db_data:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Sika123456*
+    restart: always
+
+volumes:
+  db_data:

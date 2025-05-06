@@ -1,0 +1,16 @@
+POST http://localhost:5229/api/auth/login
+content-type: application/json
+
+{
+    "username": "adminsika",
+    "password": "Sika123456*"
+}
+###
+
+GET http://localhost:5229/api/customers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NTYwMjM4MCwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.uv1w2dLkXup2iA8biiyqyILbhbNqBiZxCgb8eQumupA
+
+###
+
+POST http://localhost:5229/api/customers?customer=John Doe
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NTYwMjM4MCwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.uv1w2dLkXup2iA8biiyqyILbhbNqBiZxCgb8eQumupA
