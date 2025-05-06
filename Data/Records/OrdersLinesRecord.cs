@@ -17,22 +17,22 @@ namespace OrdersAPI.Data.Records
             new("Status", SqlDbType.NVarChar, 20)
         ];
 
-        static SqlDataRecord CreateRecord(OrdersLinesInsertDto dto)
+        static SqlDataRecord CreateRecord(OrdersLinesDto dto)
         {
             var record = new SqlDataRecord(metadata);   
-            record.SetString(0, dto.OrderNumber);
-            record.SetInt32(1, dto.LineNum);
-            record.SetString(2, dto.ItemId);
-            record.SetString(3, dto.ItemName);
-            record.SetDecimal(4, dto.UnitPrice);
-            record.SetInt32(5, dto.Quantity);
-            record.SetDecimal(6, dto.TotalAmount);
-            record.SetString(7, dto.Status);
+            record.SetString(0, dto.OrderNumber ?? string.Empty);
+            record.SetInt32(1, dto.LineNum ?? 0);
+            record.SetString(2, dto.ItemId ?? string.Empty);
+            record.SetString(3, dto.ItemName ?? string.Empty);
+            record.SetDecimal(4, dto.UnitPrice ?? 0);
+            record.SetInt32(5, dto.Quantity ?? 0);
+            record.SetDecimal(6, dto.TotalAmount ?? 0);
+            record.SetString(7, dto.Status ?? string.Empty);
 
             return record;
         }
 
-        public static SqlDataRecord[] Records(IEnumerable<OrdersLinesInsertDto> dto)
+        public static SqlDataRecord[] Records(IEnumerable<OrdersLinesDto> dto)
         {
             return [.. dto.Select(CreateRecord)];
         }

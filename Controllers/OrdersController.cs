@@ -57,6 +57,28 @@ namespace OrdersAPI.Controllers
 
             return BadRequest(_response);
         }
+
+        [HttpPut("update")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> Update([FromBody] OrdersUpdateDto ordersDto)
+        {
+            var res = await _ordersRepository.Update(ordersDto);
+
+            if (res != null)
+            {
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = res;
+
+                return Ok(_response);
+            }
+
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add("Error al actualizar la orden.");
+
+            return BadRequest(_response);
+        }
     }
 }
 

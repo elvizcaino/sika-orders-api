@@ -71,31 +71,72 @@ namespace OrdersAPI.Data.Implementations
             return ordersTable;
         }
 
-        public async Task<string?> Insert([FromBody] OrdersInsertDto ordersInsertDto)
+        public async Task<string?> Insert([FromBody] OrdersInsertDto ordersDto)
         {
             string? value = null;
 
             try
             {
-                var ordersLines = OrdersLinesRecord.Records(ordersInsertDto.OrdersLines);
+                var ordersLines = OrdersLinesRecord.Records(ordersDto.OrdersLines);
 
                 using var cnn = new SqlConnection(_cnn.SqlConnection);
                 cnn.Open();
 
-                SqlCommand cmd = new("sp_UpsertOrders", cnn)
+                SqlCommand cmd = new("sp_InsertOrders", cnn)
                 {
                     CommandType = CommandType.StoredProcedure
                 };
 
-                cmd.Parameters.AddWithValue("@OrderNumber", ordersInsertDto.OrderNumber);
-                cmd.Parameters.AddWithValue("@CustAccount", ordersInsertDto.CustAccount);
-                cmd.Parameters.AddWithValue("@CustRIF", ordersInsertDto.CustRIF);
-                cmd.Parameters.AddWithValue("@CustIdentification", ordersInsertDto.CustIdentification);
-                cmd.Parameters.AddWithValue("@CustName", ordersInsertDto.CustName);
-                cmd.Parameters.AddWithValue("@TotalAmount", ordersInsertDto.TotalAmount);
-                cmd.Parameters.AddWithValue("@Status", ordersInsertDto.Status);
-
+                cmd.Parameters.AddWithValue("@OrderNumber", ordersDto.OrderNumber);
+                cmd.Parameters.AddWithValue("@CustAccount", ordersDto.CustAccount);
+                cmd.Parameters.AddWithValue("@CustRIF", ordersDto.CustRIF);
+                cmd.Parameters.AddWithValue("@CustIdentification", ordersDto.CustIdentification);
+                cmd.Parameters.AddWithValue("@CustName", ordersDto.CustName);
+                cmd.Parameters.AddWithValue("@TotalAmount", ordersDto.TotalAmount);
+                cmd.Parameters.AddWithValue("@Status", ordersDto.Status);
                 cmd.Parameters.Add("@OrdersLines", SqlDbType.Structured).Value = ordersLines;
+                cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                var res = await cmd.ExecuteNonQueryAsync();
+
+                if (res > 0)
+                {
+                    value = "OK";
+                }
+            }
+            catch (Exception ex)
+            {
+                value = ex.Message;
+            }
+
+            return value;
+        }
+    
+        public async Task<string?> Update(OrdersUpdateDto ordersDto)
+        {
+            string? value = null;
+
+            try
+            {
+                var ordersLines = OrdersLinesRecord.Records(ordersDto.OrdersLines);
+
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                cnn.Open();
+
+                SqlCommand cmd = new("sp_UpdateOrders", cnn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@OrderNumber", ordersDto.OrderNumber);
+                cmd.Parameters.AddWithValue("@CustAccount", ordersDto.CustAccount);
+                cmd.Parameters.AddWithValue("@CustRIF", ordersDto.CustRIF);
+                cmd.Parameters.AddWithValue("@CustIdentification", ordersDto.CustIdentification);
+                cmd.Parameters.AddWithValue("@CustName", ordersDto.CustName);
+                cmd.Parameters.AddWithValue("@TotalAmount", ordersDto.TotalAmount);
+                cmd.Parameters.AddWithValue("@Status", ordersDto.Status);
+                cmd.Parameters.Add("@OrdersLines", SqlDbType.Structured).Value = ordersLines;
+                cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                 var res = await cmd.ExecuteNonQueryAsync();
 

@@ -172,3 +172,4 @@ C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\refint\OrdersAPI.dll
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.pdb
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.genruntimeconfig.cache
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\ref\OrdersAPI.dll
+C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.sourcelink.json

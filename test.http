@@ -3,14 +3,86 @@ content-type: application/json
 
 {
     "username": "adminsika",
-    "password": "Sika123456*"
+    "password": "Ax2020***"
 }
 ###
 
-GET http://localhost:5229/api/customers
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NTYwMjM4MCwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.uv1w2dLkXup2iA8biiyqyILbhbNqBiZxCgb8eQumupA
+GET http://localhost:5229/api/orders/getByOrderNumber?orderNumber=ON003
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NjY0NjQ3OSwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.1_YPa6O2-LdESJ3Ewph5XCv9N5NHoHXrTXA0e1yVfw4
+
 
 ###
 
-POST http://localhost:5229/api/customers?customer=John Doe
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NTYwMjM4MCwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.uv1w2dLkXup2iA8biiyqyILbhbNqBiZxCgb8eQumupA
+POST http://localhost:5229/api/orders/insert
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NjY0NjQ3OSwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.1_YPa6O2-LdESJ3Ewph5XCv9N5NHoHXrTXA0e1yVfw4
+content-type: application/json
+{
+    "orderNumber": "ON003",
+    "custAccount": "CA333333333",
+    "custRIF": "V333333333",
+    "custIdentification": "333333333",
+    "custName": "John Doe",
+    "totalAmount": 3000,
+    "status": "Pendiente",
+    "ordersLines": [
+        {
+            "orderNumber": "ON003",
+            "lineNum": 1,
+            "itemId": "123456",
+            "itemName": "Item 123456",
+            "unitPrice": 1000,
+            "quantity": 1,
+            "totalAmount": 1000,
+            "status": "Pendiente"
+        },
+        {
+            "orderNumber": "ON003",
+            "lineNum": 21,
+            "itemId": "6543121",
+            "itemName": "Item 6543121",
+            "unitPrice": 2000,
+            "quantity": 1,
+            "totalAmount": 2000,
+            "status": "Pendiente"
+        }
+    ],
+    
+}
+
+###
+
+PUT http://localhost:5229/api/orders/update
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VyTmFtZSI6ImFkbWluc2lrYSIsInJvbGUiOiJhZG1pbiIsImV4cCI6MTc0NjY0NjQ3OSwiaXNzIjoiaHR0cHM6Ly92ZW4uc2lrYS5jb20vLyIsImF1ZCI6Imh0dHBzOi8vdmVuLnNpa2EuY29tLy8ifQ.1_YPa6O2-LdESJ3Ewph5XCv9N5NHoHXrTXA0e1yVfw4
+content-type: application/json
+{
+    "orderNumber": "ON003",
+    "custAccount": "CA333333333",
+    "custRIF": "V333333333",
+    "custIdentification": "333333333",
+    "custName": "John Doe",
+    "totalAmount": 3000,
+    "status": "Pendiente",
+    "ordersLines": [
+        {
+            "orderNumber": "ON003",
+            "lineNum": 1,
+            "itemId": "123456",
+            "itemName": "Item 123456",
+            "unitPrice": 1000,
+            "quantity": 1,
+            "totalAmount": 1000,
+            "status": "Pendiente"
+        },
+        {
+            "orderNumber": "ON003",
+            "lineNum": 21,
+            "itemId": "6543121",
+            "itemName": "Item 6543121",
+            "unitPrice": 2000,
+            "quantity": 1,
+            "totalAmount": 2000,
+            "status": "Pendiente1"
+        }
+    ]
+}
+###

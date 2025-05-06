@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OrdersAPI.Data.DTOs
 {
-    public class OrdersInsertDto
+    public class OrdersUpdateDto
     {
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public required string OrderNumber { get; set; }

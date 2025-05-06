@@ -1,20 +1,18 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace OrdersAPI.Data.DTOs
 {
     public class OrdersLinesDto
     {
-        public required int Id { get; set; }
-        public required DateTime CreatedAt { get; set; }
-        public required DateTime UpdatedAt { get; set; }
-        public required string OrderNumber { get; set; }
-        public required int LineNum { get; set; }
-        public required string ItemId { get; set; }
-        public required string ItemName { get; set; }
-        public required decimal UnitPrice { get; set; }
-        public required int Quantity { get; set; }
-        public required decimal TotalAmount { get; set; }
-        public required string Status { get; set; }
+        public int? Id { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public string? OrderNumber { get; set; }
+        public int? LineNum { get; set; }
+        public string? ItemId { get; set; }
+        public string? ItemName { get; set; }
+        public decimal? UnitPrice { get; set; }
+        public int? Quantity { get; set; }
+        public decimal? TotalAmount { get; set; }
+        public string? Status { get; set; }
     }
 
 }
