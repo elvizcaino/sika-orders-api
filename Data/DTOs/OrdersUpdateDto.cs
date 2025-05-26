@@ -21,10 +21,40 @@ namespace OrdersAPI.Data.DTOs
         public required string CustName { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
-        public decimal TotalAmount { get; set; }
+        public required string CustAddress { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
-        public required string Status { get; set; }
+        public required DateTime IssueDate { get; set; }
+
+         [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required DateTime DueDate { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required string SalesPersonId { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required string SalesPersonName { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required string RegionId { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required string RegionName { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required string CreditDays { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public decimal BaseTaxable { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public decimal Base0 { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public decimal TaxRate { get; set; }
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public decimal TotalTaxes { get; set; }
 
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public required IEnumerable<OrdersLinesDto> OrdersLines { get; set; }

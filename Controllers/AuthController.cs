@@ -79,6 +79,8 @@ namespace OrdersAPI.Controllers
                 var tokenManager = new TokenManager(_configuration);
                 var newToken = tokenManager.GenerateToken(userDto);
 
+                userDto.Token = newToken;
+
                 _apiResponse.StatusCode = System.Net.HttpStatusCode.OK;
                 _apiResponse.IsSuccess = true;
                 _apiResponse.Result = new { Token = newToken };

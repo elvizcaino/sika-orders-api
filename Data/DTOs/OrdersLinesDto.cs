@@ -11,6 +11,8 @@ namespace OrdersAPI.Data.DTOs
         public string? ItemName { get; set; }
         public decimal? UnitPrice { get; set; }
         public int? Quantity { get; set; }
+        public decimal? Kgs { get; set; }
+        public decimal? TotalKgs { get; set; }
         public decimal? TotalAmount { get; set; }
         public string? Status { get; set; }
     }

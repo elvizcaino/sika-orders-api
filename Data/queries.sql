@@ -42,6 +42,7 @@ CREATE TABLE [dbo].[OrdersTable](
 	[CustIdentification] [nvarchar](15) NOT NULL,
 	[CustName] [nvarchar](60) NOT NULL,
 	[TotalAmount] [decimal](18, 2) NOT NULL,
+    [ControlNumber] [nvarchar](15) NULL,
 	[Status] [nvarchar](20) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -125,9 +126,31 @@ CREATE TYPE [dbo].[OrdersLinesType] AS TABLE
 	[ItemName] NVARCHAR(60),
 	[UnitPrice] DECIMAL(18, 2),
 	[Quantity] INT,
+    [Kgs] DECIMAL(18, 2),
+    [TotalKgs] DECIMAL(18, 2),
 	[TotalAmount] DECIMAL(18, 2),
 	[Status] NVARCHAR(20)
 )
+GO
+
+CREATE PROCEDURE [dbo].[sp_CheckIfOrderExists]
+    @OrderNumber NVARCHAR(20),
+    @ReturnValue INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Exists INT;
+    SELECT @Exists = COUNT(*) FROM OrdersTable WHERE OrderNumber = @OrderNumber;
+    IF @Exists = 0
+    BEGIN
+        SET @ReturnValue = 0;
+    END
+    ELSE
+    BEGIN
+        SET @ReturnValue = 1;
+    END
+END
 GO
 
 CREATE PROCEDURE [dbo].[sp_InsertOrders]
@@ -179,6 +202,28 @@ BEGIN
     
     CLOSE CUR_OrderLines;
     DEALLOCATE CUR_OrderLines;
+
+    SET @ReturnValue = 1;
+END
+GO
+
+CREATE PROCEDURE [dbo].[sp_UpdateOrdersTable_ControlNumber]
+    @OrderNumber NVARCHAR(20),
+    @ControlNumber NVARCHAR(15),
+    @ReturnValue INT OUTPUT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (SELECT 1 FROM OrdersTable WHERE OrderNumber = @OrderNumber)
+    BEGIN
+        SET @ReturnValue = 0;
+        RETURN;
+    END
+
+    UPDATE OrdersTable
+    SET ControlNumber = @ControlNumber
+    WHERE OrderNumber = @OrderNumber;
 
     SET @ReturnValue = 1;
 END
