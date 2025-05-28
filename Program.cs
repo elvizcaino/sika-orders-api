@@ -98,7 +98,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sika API - V1 - Desarrollo"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SikaAX-KLK API - V1 - Development"));
 }
 
 app.UseHttpsRedirection();

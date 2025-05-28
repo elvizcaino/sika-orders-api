@@ -17,6 +17,10 @@ namespace OrdersAPI.Controllers
         protected ApiResponse _apiResponse = new();
 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(ApiResponse))]
         [AllowAnonymous]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginDto loginUser)
         {
@@ -34,6 +38,95 @@ namespace OrdersAPI.Controllers
             _apiResponse.StatusCode = System.Net.HttpStatusCode.OK;
             _apiResponse.IsSuccess = true;
             _apiResponse.Result = new { User = user };
+
+            return Ok(_apiResponse);
+        }
+
+        [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(ApiResponse))]
+        [AllowAnonymous]
+        public async Task<ActionResult<ApiResponse>> Register([FromBody] LoginDto user)
+        {
+            var result = await _authRepository.Register(user);
+
+            if (result == null)
+            {
+                _apiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Error al registrar el usuario");
+
+                return BadRequest(_apiResponse);
+            }
+
+            _apiResponse.StatusCode = System.Net.HttpStatusCode.Created;
+            _apiResponse.IsSuccess = true;
+            _apiResponse.Result = new { Message = "Usuario registrado exitosamente" };
+
+            return CreatedAtAction(nameof(Register), _apiResponse);
+        }
+
+        [HttpPost("enable-user")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(ApiResponse))]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<ApiResponse>> EnableUser([FromBody] EnableUserDto user)
+        {
+            var result = await _authRepository.EnableUser(user.UserName);
+
+            if (result == null)
+            {
+                _apiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Error al habilitar el usuario");
+
+                return BadRequest(_apiResponse);
+            }
+
+            _apiResponse.StatusCode = System.Net.HttpStatusCode.OK;
+            _apiResponse.IsSuccess = true;
+            _apiResponse.Result = new { Message = "Usuario habilitado exitosamente" };
+
+            return Ok(_apiResponse);
+        }
+
+        [HttpPost("change-user-role")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden, Type = typeof(ApiResponse))]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<ApiResponse>> ChangeUserRole([FromBody] ChangeUserRoleDto userRole)
+        {
+            var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
+
+            if(userNameClaim?.Value == userRole.UserName.ToLower())
+            {
+                _apiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("No puedes cambiar tu propio rol");
+
+                return BadRequest(_apiResponse);
+            }
+
+            var result = await _authRepository.ChangeUserRole(userRole);
+
+            if (result == null)
+            {
+                _apiResponse.StatusCode = System.Net.HttpStatusCode.BadRequest;
+                _apiResponse.IsSuccess = false;
+                _apiResponse.ErrorMessages.Add("Error al cambiar el rol del usuario");
+
+                return BadRequest(_apiResponse);
+            }
+
+            _apiResponse.StatusCode = System.Net.HttpStatusCode.OK;
+            _apiResponse.IsSuccess = true;
+            _apiResponse.Result = new { Message = "Rol del usuario cambiado exitosamente" };
 
             return Ok(_apiResponse);
         }

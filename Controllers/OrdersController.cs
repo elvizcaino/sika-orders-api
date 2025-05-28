@@ -14,7 +14,7 @@ namespace OrdersAPI.Controllers
         private readonly IOrdersRepository _ordersRepository = ordersRepository;
 
         [HttpGet("getByOrderNumber")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> GetByOrderNumber(string orderNumber)
         {
             var res = await _ordersRepository.GetOrdersTableByOrderNumber(orderNumber);
@@ -37,7 +37,7 @@ namespace OrdersAPI.Controllers
 
 
         [HttpPost("insert")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> Insert([FromBody] OrdersInsertDto ordersDto)
         {
             var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");

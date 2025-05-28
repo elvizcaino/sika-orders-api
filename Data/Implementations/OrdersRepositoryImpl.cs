@@ -98,7 +98,7 @@ namespace OrdersAPI.Data.Implementations
             cmd.Parameters.AddWithValue("@OrderNumber", orderNumber);
             cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
 
-            var res = await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync();
 
             int returnValue = (int)cmd.Parameters["@ReturnValue"].Value;
 

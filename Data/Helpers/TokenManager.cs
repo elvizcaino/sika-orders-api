@@ -28,7 +28,7 @@ namespace OrdersAPI.Data.Helpers
                 _configuration["Jwt:Issuer"], 
                 _configuration["Jwt:Audience"], 
                 claims, 
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: credentials
             );
 

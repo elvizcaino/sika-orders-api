@@ -16,8 +16,9 @@ namespace OrdersAPI.Data.Implementations
         public async Task<UserDto?> Login(LoginDto loginUser)
         {
             UserDto? user = null;
+            string userName = loginUser.UserName.ToLower();
             using var cnn = new SqlConnection(_cnn.SqlConnection);
-
+            
             cnn.Open();
 
             var cmd = new SqlCommand("sp_Login", cnn)
@@ -25,7 +26,7 @@ namespace OrdersAPI.Data.Implementations
                 CommandType = CommandType.StoredProcedure
             };
 
-            cmd.Parameters.AddWithValue("@UserName", loginUser.UserName);
+            cmd.Parameters.AddWithValue("@UserName", userName);
 
             using (var reader = await cmd.ExecuteReaderAsync())
             {
@@ -35,11 +36,11 @@ namespace OrdersAPI.Data.Implementations
 
                     var hashedPassword = reader["Password"].ToString()!;
 
-                    //var newPassword = Encrypt.EncryptPassword(loginUser.UserName, loginUser.Password);
+                    //var newPassword = Encrypt.EncryptPassword(userName, loginUser.Password);
 
                     //Console.WriteLine(newPassword);
-                    
-                    var isValidPassword = Encrypt.VerifyHashedPassword(loginUser.UserName, loginUser.Password, hashedPassword);
+
+                    var isValidPassword = Encrypt.VerifyHashedPassword(userName, loginUser.Password, hashedPassword);
 
                     if (isValidPassword)
                     {
@@ -50,12 +51,74 @@ namespace OrdersAPI.Data.Implementations
                             Role = reader["Role"].ToString()!
                         };
 
-                        user.Token =  new TokenManager(_configuration).GenerateToken(user!);
+                        user.Token = new TokenManager(_configuration).GenerateToken(user!);
                     }
                 }
             }
 
             return user;
+        }
+
+        public async Task<string?> Register(LoginDto user)
+        {
+            using var cnn = new SqlConnection(_cnn.SqlConnection);
+
+            cnn.Open();
+
+            var cmd = new SqlCommand("sp_RegisterUser", cnn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@UserName", user.UserName.ToLower());
+            cmd.Parameters.AddWithValue("@Password", Encrypt.EncryptPassword(user.UserName, user.Password));
+            cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+            await cmd.ExecuteNonQueryAsync();
+            var returnValue = (int)cmd.Parameters["@ReturnValue"].Value;
+
+            return returnValue > 0 ? "OK" : null;
+        }
+
+        public async Task<string?> EnableUser(string userName)
+        {
+            using var cnn = new SqlConnection(_cnn.SqlConnection);
+
+            cnn.Open();
+
+            var cmd = new SqlCommand("sp_EnableUser", cnn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@UserName", userName);
+            cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+            await cmd.ExecuteNonQueryAsync();
+            var returnValue = (int)cmd.Parameters["@ReturnValue"].Value;
+
+            return returnValue > 0 ? "OK" : null;
+        }
+
+        public async Task<string?> ChangeUserRole(ChangeUserRoleDto userRole)
+        {
+            using var cnn = new SqlConnection(_cnn.SqlConnection);
+
+            cnn.Open();
+
+            var cmd = new SqlCommand("sp_ChangeUserRole", cnn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            cmd.Parameters.AddWithValue("@UserName", userRole.UserName);
+            cmd.Parameters.AddWithValue("@Role", userRole.Role);
+            cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+            await cmd.ExecuteNonQueryAsync();
+            var returnValue = (int)cmd.Parameters["@ReturnValue"].Value;
+
+            return returnValue > 0 ? "OK" : null;
         }
     }
 }
