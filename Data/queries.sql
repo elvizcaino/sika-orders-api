@@ -124,11 +124,17 @@ CREATE TYPE [dbo].[OrdersLinesType] AS TABLE
 	[LineNum] INT,
 	[ItemId] NVARCHAR(20),
 	[ItemName] NVARCHAR(60),
-	[UnitPrice] DECIMAL(18, 2),
+	[Unit] NVARCHAR(10),
 	[Quantity] INT,
     [Kgs] DECIMAL(18, 2),
     [TotalKgs] DECIMAL(18, 2),
+	[UnitPrice] DECIMAL(18, 2),	
 	[TotalAmount] DECIMAL(18, 2),
+	[TaxCode] NVARCHAR(10),
+	[TaxValue] DECIMAL(18, 2),
+	[TaxAmount] DECIMAL(18, 2),
+	[DiscAmount] DECIMAL(18, 2),
+	[DiscPercent] DECIMAL(18, 2),
 	[Status] NVARCHAR(20)
 )
 GO

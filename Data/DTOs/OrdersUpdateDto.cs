@@ -56,7 +56,13 @@ namespace OrdersAPI.Data.DTOs
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public decimal TotalTaxes { get; set; }
 
+        public string? CurrencyCode { get; set; }
+
         [Required(ErrorMessage = "El campo {0} es obligatorio")]
         public required IEnumerable<OrdersLinesDto> OrdersLines { get; set; }
+
+
+        [Required(ErrorMessage = "El campo {0} es obligatorio")]
+        public required OrdersTotalsDto OrdersTotals { get; set; }
     }
 }

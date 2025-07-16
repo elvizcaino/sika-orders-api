@@ -22,9 +22,11 @@ namespace OrdersAPI.Data.DTOs
         public required decimal Base0 { get; set; }
         public required decimal TaxRate { get; set; }
         public required decimal TotalTaxes { get; set; }
+        public string? CurrencyCode { get; set; }
         public string? ControlNumber { get; set; }
         public required string Status { get; set; }
 
         public required List<OrdersLinesDto> OrdersLines { get; set; }
+        public OrdersTotalsDto? OrdersTotals { get; set; }
     }
 }

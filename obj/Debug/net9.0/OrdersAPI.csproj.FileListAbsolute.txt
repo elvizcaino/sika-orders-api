@@ -173,3 +173,4 @@ C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.pdb
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.genruntimeconfig.cache
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\ref\OrdersAPI.dll
 C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\OrdersAPI.sourcelink.json
+C:\Clientes\SIKA\OrdersAPI\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

@@ -24,6 +24,7 @@ namespace OrdersAPI.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginDto loginUser)
         {
+            Console.WriteLine($"Login attempt for user: {loginUser.UserName}");
             var user = await _authRepository.Login(loginUser);
 
             if (user == null)

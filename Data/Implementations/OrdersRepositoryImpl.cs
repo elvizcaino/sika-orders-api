@@ -52,14 +52,17 @@ namespace OrdersAPI.Data.Implementations
                     Base0 = reader.GetDecimal(17),
                     TaxRate = reader.GetDecimal(18),
                     TotalTaxes = reader.GetDecimal(19),
-                    ControlNumber = reader.IsDBNull(20) ? null : reader.GetString(20),
-                    Status = reader.GetString(21),
+                    CurrencyCode = reader.IsDBNull(20) ? null : reader.GetString(20),
+                    ControlNumber = reader.IsDBNull(21) ? null : reader.GetString(21),
+                    Status = reader.GetString(22),
                     OrdersLines = []
                 };
             }
 
-            if (ordersTable != null && await reader.NextResultAsync())
+            if (ordersTable != null)
             {
+                await reader.NextResultAsync();
+
                 while (await reader.ReadAsync())
                 {
                     var orderLine = new OrdersLinesDto
@@ -71,15 +74,38 @@ namespace OrdersAPI.Data.Implementations
                         LineNum = reader.GetInt32(4),
                         ItemId = reader.GetString(5),
                         ItemName = reader.GetString(6),
-                        Quantity = reader.GetInt32(7),
-                        Kgs = reader.GetDecimal(8),
-                        TotalKgs = reader.GetDecimal(9),
-                        UnitPrice = reader.GetDecimal(10),
-                        TotalAmount = reader.GetDecimal(11),
-                        Status = reader.GetString(12)
+                        Unit = reader.IsDBNull(7) ? null : reader.GetString(7),
+                        Quantity = reader.GetInt32(8),
+                        Kgs = reader.GetDecimal(9),
+                        TotalKgs = reader.GetDecimal(10),
+                        UnitPrice = reader.GetDecimal(11),
+                        TotalAmount = reader.GetDecimal(12),
+                        TaxCode = reader.IsDBNull(13) ? null : reader.GetString(13),
+                        TaxValue = reader.IsDBNull(14) ? null : reader.GetDecimal(14),
+                        TaxAmount = reader.IsDBNull(15) ? null : reader.GetDecimal(15),
+                        DiscAmount = reader.IsDBNull(16) ? null : reader.GetDecimal(16),
+                        DiscPercent = reader.IsDBNull(17) ? null : reader.GetDecimal(17),
+                        Status = reader.GetString(18)
                     };
                     ordersTable.OrdersLines.Add(orderLine);
                 }
+
+                await reader.NextResultAsync();
+                var orderTotals = new OrdersTotalsDto
+                { 
+                    Id = reader.GetInt32(0),
+                    CreatedAt = reader.GetDateTime(1),
+                    UpdatedAt = reader.GetDateTime(2),
+                    OrderNumber = reader.GetString(3),
+                    TotalKgs = reader.GetDecimal(4),
+                    Subtotal = reader.GetDecimal(5),
+                    DiscPrice = reader.GetDecimal(6),
+                    BaseTaxable = reader.GetDecimal(7),
+                    TotalTax = reader.GetDecimal(8),
+                    TotalToPay = reader.GetDecimal(9),
+                    Observs = reader.IsDBNull(10) ? null : reader.GetString(10),
+                };
+                ordersTable.OrdersTotals = orderTotals;
             }
 
             return ordersTable;
@@ -118,7 +144,9 @@ namespace OrdersAPI.Data.Implementations
 
             try
             {
+                List<OrdersTotalsDto> ordersTotal = [ordersDto.OrdersTotals];
                 var ordersLines = OrdersLinesRecord.Records(ordersDto.OrdersLines);
+                var ordersTotals = OrdersTotalsRecord.Records(ordersTotal);
 
                 using var cnn = new SqlConnection(_cnn.SqlConnection);
                 cnn.Open();
@@ -151,7 +179,9 @@ namespace OrdersAPI.Data.Implementations
                 cmd.Parameters.AddWithValue("@Base0", ordersDto.Base0);
                 cmd.Parameters.AddWithValue("@TaxRate", ordersDto.TaxRate);
                 cmd.Parameters.AddWithValue("@TotalTaxes", ordersDto.TotalTaxes);
+                cmd.Parameters.AddWithValue("@CurrencyCode", ordersDto.CurrencyCode);
                 cmd.Parameters.Add("@OrdersLines", SqlDbType.Structured).Value = ordersLines;
+                cmd.Parameters.Add("@OrdersTotals", SqlDbType.Structured).Value = ordersTotals;
                 cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                 await cmd.ExecuteNonQueryAsync();
@@ -177,7 +207,9 @@ namespace OrdersAPI.Data.Implementations
 
             try
             {
+                List<OrdersTotalsDto> ordersTotal = [ordersDto.OrdersTotals];
                 var ordersLines = OrdersLinesRecord.Records(ordersDto.OrdersLines);
+                var ordersTotals = OrdersTotalsRecord.Records(ordersTotal);
 
                 using var cnn = new SqlConnection(_cnn.SqlConnection);
                 cnn.Open();
@@ -210,7 +242,9 @@ namespace OrdersAPI.Data.Implementations
                 cmd.Parameters.AddWithValue("@Base0", ordersDto.Base0);
                 cmd.Parameters.AddWithValue("@TaxRate", ordersDto.TaxRate);
                 cmd.Parameters.AddWithValue("@TotalTaxes", ordersDto.TotalTaxes);
+                cmd.Parameters.AddWithValue("@CurrencyCode", ordersDto.CurrencyCode);
                 cmd.Parameters.Add("@OrdersLines", SqlDbType.Structured).Value = ordersLines;
+                cmd.Parameters.Add("@OrdersTotals", SqlDbType.Structured).Value = ordersTotals;
                 cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.Output;
 
                 await cmd.ExecuteNonQueryAsync();

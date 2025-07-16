@@ -17,6 +17,7 @@ builder.Services.AddResponseCaching();
 // Dependency Injection
 builder.Services.AddScoped<IAuthRepository, AuthRepositoryImpl>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepositoryImpl>();
+builder.Services.AddScoped<ITaxTableRepository, TaxTableRepositoryImpl>();
 
 // Cors configration
 // Se puede habilitar:
@@ -98,7 +99,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SikaAX-KLK API - V1 - Development"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SikaAX-KLK API - V1 - Desarrollo"));
 }
 
 app.UseHttpsRedirection();
