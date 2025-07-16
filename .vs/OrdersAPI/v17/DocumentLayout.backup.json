@@ -42,8 +42,7 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T22:29:14.471Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-16T22:29:14.471Z"
             },
             {
               "$type": "Document",
@@ -55,8 +54,7 @@
               "RelativeToolTip": "Controllers\\OrdersController.cs",
               "ViewState": "AgIAABEAAAAAAAAAAAAQwDoAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T22:23:52.823Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-16T22:23:52.823Z"
             },
             {
               "$type": "Document",
@@ -68,8 +66,7 @@
               "RelativeToolTip": "Controllers\\TaxTableController.cs",
               "ViewState": "AgIAABkAAAAAAAAAAAAgwB4AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T22:23:51.344Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-16T22:23:51.344Z"
             },
             {
               "$type": "Document",
@@ -81,8 +78,7 @@
               "RelativeToolTip": "Data\\Implementations\\OrdersRepositoryImpl.cs",
               "ViewState": "AgIAAK4AAAAAAAAAAAAwwLgAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T22:17:43.102Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-16T22:17:43.102Z"
             },
             {
               "$type": "Document",
@@ -90,9 +86,9 @@
               "Title": "TaxTableRepositoryImpl.cs",
               "DocumentMoniker": "C:\\Clientes\\SIKA\\OrdersAPI\\Data\\Implementations\\TaxTableRepositoryImpl.cs",
               "RelativeDocumentMoniker": "Data\\Implementations\\TaxTableRepositoryImpl.cs",
-              "ToolTip": "C:\\Clientes\\SIKA\\OrdersAPI\\Data\\Implementations\\TaxTableRepositoryImpl.cs*",
-              "RelativeToolTip": "Data\\Implementations\\TaxTableRepositoryImpl.cs*",
-              "ViewState": "AgIAABYAAAAAAAAAAAAgwCYAAABoAAAAAAAAAA==",
+              "ToolTip": "C:\\Clientes\\SIKA\\OrdersAPI\\Data\\Implementations\\TaxTableRepositoryImpl.cs",
+              "RelativeToolTip": "Data\\Implementations\\TaxTableRepositoryImpl.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwBAAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-16T22:17:40.611Z",
               "EditorCaption": ""
