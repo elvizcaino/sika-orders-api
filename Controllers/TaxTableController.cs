@@ -21,7 +21,7 @@ namespace OrdersAPI.Controllers
             var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
             var res = await _taxTableRepository.Upsert(taxTableDto, userNameClaim?.Value ?? "N/A");
 
-            if (res != null)
+            if (res == "OK")
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -32,7 +32,37 @@ namespace OrdersAPI.Controllers
 
             _response.StatusCode = HttpStatusCode.BadRequest;
             _response.IsSuccess = false;
-            _response.ErrorMessages.Add("Error al insertar el registro.");
+            _response.ErrorMessages.Add(res);
+
+            return BadRequest(_response);
+        }
+
+        [HttpDelete("{code}")]
+        [Authorize(Roles = "admin,user")]
+        public async Task<IActionResult> Delete(string code)
+        {
+            if (!string.IsNullOrWhiteSpace(code))
+            {
+                var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
+                var res = await _taxTableRepository.Delete(code, userNameClaim?.Value ?? "N/A");
+
+                if (res == "OK")
+                {
+                    _response.StatusCode = HttpStatusCode.OK;
+                    _response.IsSuccess = true;
+                    _response.Result = res;
+
+                    return Ok(_response);
+                }
+                
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add(res);
+            }
+
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add("'Code' no puede ser vacío.");
 
             return BadRequest(_response);
         }

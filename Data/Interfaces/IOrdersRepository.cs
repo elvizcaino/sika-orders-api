@@ -6,8 +6,8 @@ namespace OrdersAPI.Data.Interfaces
     {
         Task<OrdersTableDto?> GetOrdersTableByOrderNumber(string orderNumber);
         Task<string> Exists(string orderNumber);
-        Task<string?> Insert(OrdersInsertDto ordersDto, string userName);
-        Task<string?> Update(OrdersUpdateDto ordersDto, string userName);
+        Task<string> Insert(OrdersInsertDto ordersDto, string userName);
+        Task<string> Update(OrdersUpdateDto ordersDto, string userName);
         Task<string> UpdateControlNumber(string orderNumber, OrdersUpdateControlNumberDto dto, string userName);
     }
 }

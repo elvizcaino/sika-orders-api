@@ -18,6 +18,9 @@ builder.Services.AddResponseCaching();
 builder.Services.AddScoped<IAuthRepository, AuthRepositoryImpl>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepositoryImpl>();
 builder.Services.AddScoped<ITaxTableRepository, TaxTableRepositoryImpl>();
+builder.Services.AddScoped<IWithholdingsRepository, WithholdingsRepositoryImpl>();
+builder.Services.AddScoped<ICustomersRepository, CustomersRepositoryImpl>();
+builder.Services.AddScoped<IItemsRepository, ItemsRepositoryImpl>();
 
 // Cors configration
 // Se puede habilitar:

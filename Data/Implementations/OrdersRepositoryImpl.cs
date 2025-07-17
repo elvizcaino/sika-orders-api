@@ -138,9 +138,9 @@ namespace OrdersAPI.Data.Implementations
             }
         }
 
-        public async Task<string?> Insert([FromBody] OrdersInsertDto ordersDto, string userName)
+        public async Task<string> Insert([FromBody] OrdersInsertDto ordersDto, string userName)
         {
-            string? value = null;
+            string value = "";
 
             try
             {
@@ -201,9 +201,9 @@ namespace OrdersAPI.Data.Implementations
             return value;
         }
 
-        public async Task<string?> Update(OrdersUpdateDto ordersDto, string userName)
+        public async Task<string> Update(OrdersUpdateDto ordersDto, string userName)
         {
-            string? value = null;
+            string value = "";
 
             try
             {

@@ -43,7 +43,7 @@ namespace OrdersAPI.Controllers
             var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
             var res = await _ordersRepository.Insert(ordersDto, userNameClaim?.Value ?? "N/A");
 
-            if (res != null)
+            if (res == "OK")
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -54,7 +54,7 @@ namespace OrdersAPI.Controllers
 
             _response.StatusCode = HttpStatusCode.BadRequest;
             _response.IsSuccess = false;
-            _response.ErrorMessages.Add("Error al insertar la orden.");
+            _response.ErrorMessages.Add(res);
 
             return BadRequest(_response);
         }
@@ -77,7 +77,7 @@ namespace OrdersAPI.Controllers
             var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
             var res = await _ordersRepository.Update(ordersDto, userNameClaim?.Value ?? "N/A");
 
-            if (res != null)
+            if (res == "OK")
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -88,7 +88,7 @@ namespace OrdersAPI.Controllers
 
             _response.StatusCode = HttpStatusCode.BadRequest;
             _response.IsSuccess = false;
-            _response.ErrorMessages.Add("Error al actualizar la orden.");
+            _response.ErrorMessages.Add(res);
 
             return BadRequest(_response);
         }
@@ -111,7 +111,7 @@ namespace OrdersAPI.Controllers
             var userNameClaim = User.Claims.FirstOrDefault(c => c.Type == "userName");
             var res = await _ordersRepository.UpdateControlNumber(orderNumber, dto, userNameClaim?.Value ?? "N/A");
 
-            if (res != null)
+            if (res == "OK")
             {
                 _response.StatusCode = HttpStatusCode.OK;
                 _response.IsSuccess = true;
@@ -122,7 +122,7 @@ namespace OrdersAPI.Controllers
 
             _response.StatusCode = HttpStatusCode.BadRequest;
             _response.IsSuccess = false;
-            _response.ErrorMessages.Add("Error al actualizar el número de control.");
+            _response.ErrorMessages.Add(res);
 
             return BadRequest(_response);
         }
