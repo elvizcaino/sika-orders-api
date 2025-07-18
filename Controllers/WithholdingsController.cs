@@ -14,6 +14,61 @@ namespace OrdersAPI.Controllers
         protected ApiResponse _response = new();
         private readonly IWithholdingsRepository _repository = repository;
 
+        [HttpGet]
+        [Authorize(Roles = "admin,user")]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var data = await _repository.GetAll();
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = data!;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Error interno del servidor al obtener todas las retenciones: " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, _response);
+            }
+        }
+
+        [HttpGet("{code}")]
+        [Authorize(Roles = "admin,user")]
+        public async Task<IActionResult> GetByCode(string code)
+        {
+            try
+            {
+                var data = await _repository.GetByCode(code);
+
+                if (data == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.IsSuccess = false;
+                    _response.ErrorMessages.Add($"No se encontró un registro con el código {code}");
+
+                    return NotFound(_response);
+                }
+
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Result = data;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.StatusCode = HttpStatusCode.InternalServerError;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add($"Error interno del servidor al obtener la retención por código ({code}): " + ex.Message);
+                return StatusCode((int)HttpStatusCode.InternalServerError, _response);
+            }
+        }
+
         [HttpPost("upsert")]
         [Authorize(Roles = "admin,user")]
         public async Task<IActionResult> Upsert([FromBody] IEnumerable<WithholdingsDto> data)

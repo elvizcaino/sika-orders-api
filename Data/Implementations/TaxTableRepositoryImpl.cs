@@ -13,6 +13,76 @@ namespace OrdersAPI.Data.Implementations
     {
         private readonly ConnectionConfiguration _cnn = cnn.Value;
 
+        public async Task<List<TaxTableDto>> GetAll()
+        {
+            List<TaxTableDto> taxTableData = [];
+
+            try
+            {
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                await cnn.OpenAsync();
+
+                SqlCommand cmd = new("sp_GetTaxTable", cnn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync()) 
+                    {
+                        taxTableData.Add(new TaxTableDto
+                        {
+                            Code = reader["Code"].ToString(),
+                            Value = Convert.ToDecimal(reader["Value"])
+                        });
+                    }
+                }
+                return taxTableData;
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los datos: " + ex.Message, ex);
+            }
+        }
+
+        public async Task<TaxTableDto?> GetByCode(string id)
+        {
+            TaxTableDto? taxTableData = null;
+
+            try
+            {
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                await cnn.OpenAsync();
+
+                SqlCommand cmd = new("sp_GetTaxTableByCode", cnn) 
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@Code", id);
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        taxTableData = new TaxTableDto
+                        {
+                            Code = reader["Code"].ToString(),
+                            Value = Convert.ToDecimal(reader["Value"])
+                        };
+                    }
+                }
+
+                return taxTableData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los datos: " + ex.Message, ex);
+            }
+        }
+
         public async Task<string> Upsert([FromBody] IEnumerable<TaxTableDto> taxTable, string userName)
         {
             string value = "";

@@ -233,6 +233,16 @@
   },
   {
     "ContainingType": "OrdersAPI.Controllers.CustomersController",
+    "Method": "GetAll",
+    "RelativePath": "api/customers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.CustomersController",
     "Method": "Delete",
     "RelativePath": "api/customers/{custAccount}",
     "HttpMethod": "DELETE",
@@ -249,6 +259,32 @@
   },
   {
     "ContainingType": "OrdersAPI.Controllers.CustomersController",
+    "Method": "GetByCode",
+    "RelativePath": "api/customers/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "OrdersAPI.Data.DTOs.TaxTableDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.CustomersController",
     "Method": "Upsert",
     "RelativePath": "api/customers/upsert",
     "HttpMethod": "POST",
@@ -262,6 +298,42 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.ItemsController",
+    "Method": "GetAll",
+    "RelativePath": "api/items",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.ItemsController",
+    "Method": "GetById",
+    "RelativePath": "api/items/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "OrdersAPI.Data.DTOs.TaxTableDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "OrdersAPI.Controllers.ItemsController",
@@ -291,6 +363,27 @@
         "Name": "data",
         "Type": "System.Collections.Generic.IEnumerable\u00601[[OrdersAPI.Data.DTOs.ItemsDto, OrdersAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.OrdersController",
+    "Method": "GetAll",
+    "RelativePath": "api/orders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -371,6 +464,42 @@
   },
   {
     "ContainingType": "OrdersAPI.Controllers.TaxTableController",
+    "Method": "GetAll",
+    "RelativePath": "api/taxTable",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.TaxTableController",
+    "Method": "GetByCode",
+    "RelativePath": "api/taxTable/{code}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "OrdersAPI.Data.DTOs.TaxTableDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.TaxTableController",
     "Method": "Delete",
     "RelativePath": "api/taxTable/{code}",
     "HttpMethod": "DELETE",
@@ -396,6 +525,32 @@
       {
         "Name": "taxTableDto",
         "Type": "System.Collections.Generic.IEnumerable\u00601[[OrdersAPI.Data.DTOs.TaxTableDto, OrdersAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.WithholdingsController",
+    "Method": "GetAll",
+    "RelativePath": "api/withholdings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "OrdersAPI.Controllers.WithholdingsController",
+    "Method": "GetByCode",
+    "RelativePath": "api/withholdings/{code}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "code",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],

@@ -4,7 +4,8 @@ namespace OrdersAPI.Data.Interfaces
 {
     public interface IOrdersRepository
     {
-        Task<OrdersTableDto?> GetOrdersTableByOrderNumber(string orderNumber);
+        Task<PagedResponseDto<OrdersTableDto>> GetAll(int pageNumber = 1, int pageSize = 10);
+        Task<OrdersTableDto?> GetByOrderNumber(string orderNumber);
         Task<string> Exists(string orderNumber);
         Task<string> Insert(OrdersInsertDto ordersDto, string userName);
         Task<string> Update(OrdersUpdateDto ordersDto, string userName);

@@ -13,102 +13,254 @@ namespace OrdersAPI.Data.Implementations
     {
         private readonly ConnectionConfiguration _cnn = cnn.Value;
 
-        public async Task<OrdersTableDto?> GetOrdersTableByOrderNumber(string orderNumber)
+        public async Task<PagedResponseDto<OrdersTableDto>> GetAll(int pageNumber = 1, int pageSize = 10)
         {
-            using var cnn = new SqlConnection(_cnn.SqlConnection);
-            cnn.Open();
+            List<OrdersTableDto> ordersTableData = [];
+            Dictionary<string, OrdersTableDto> ordersMap = [];
+            int totalCount = 0;
 
-            SqlCommand cmd = new("sp_GetOrdersTableByOrderNumber", cnn)
+            try
             {
-                CommandType = CommandType.StoredProcedure
-            };
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                await cnn.OpenAsync();
 
-            cmd.Parameters.AddWithValue("@OrderNumber", orderNumber);
-
-            var reader = await cmd.ExecuteReaderAsync();
-
-            OrdersTableDto? ordersTable = null;
-            if (await reader.ReadAsync())
-            {
-                ordersTable = new OrdersTableDto
+                SqlCommand cmd = new("sp_GetOrders", cnn)
                 {
-                    Id = reader.GetInt32(0),
-                    CreatedAt = reader.GetDateTime(1),
-                    UpdatedAt = reader.GetDateTime(2),
-                    OrderNumber = reader.GetString(3),
-                    CustAccount = reader.GetString(4),
-                    CustRIF = reader.GetString(5),
-                    CustIdentification = reader.GetString(6),
-                    CustName = reader.GetString(7),
-                    CustAddress = reader.GetString(8),
-                    IssueDate = reader.GetDateTime(9),
-                    DueDate = reader.GetDateTime(10),
-                    SalesPersonId = reader.GetString(11),
-                    SalesPersonName = reader.GetString(12),
-                    RegionId = reader.GetString(13),
-                    RegionName = reader.GetString(14),
-                    CreditDays = reader.GetString(15),
-                    BaseTaxable = reader.GetDecimal(16),
-                    Base0 = reader.GetDecimal(17),
-                    TaxRate = reader.GetDecimal(18),
-                    TotalTaxes = reader.GetDecimal(19),
-                    CurrencyCode = reader.IsDBNull(20) ? null : reader.GetString(20),
-                    ControlNumber = reader.IsDBNull(21) ? null : reader.GetString(21),
-                    Status = reader.GetString(22),
-                    OrdersLines = []
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@PageNumber", pageNumber);
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    // 1. Leer los encabezados de las órdenes paginadas (PRIMER result set del SP)
+                    while (await reader.ReadAsync())
+                    {
+                        var order = new OrdersTableDto
+                        {
+                            Id = reader.GetInt32(0),
+                            CreatedAt = reader.GetDateTime(1),
+                            UpdatedAt = reader.GetDateTime(2),
+                            OrderNumber = reader.GetString(3),
+                            CustAccount = reader.GetString(4),
+                            CustRIF = reader.GetString(5),
+                            CustIdentification = reader.GetString(6),
+                            CustName = reader.GetString(7),
+                            CustAddress = reader.GetString(8),
+                            IssueDate = reader.GetDateTime(9),
+                            DueDate = reader.GetDateTime(10),
+                            SalesPersonId = reader.GetString(11),
+                            SalesPersonName = reader.GetString(12),
+                            RegionId = reader.GetString(13),
+                            RegionName = reader.GetString(14),
+                            CreditDays = reader.GetString(15),
+                            BaseTaxable = reader.GetDecimal(16),
+                            Base0 = reader.GetDecimal(17),
+                            TaxRate = reader.GetDecimal(18),
+                            TotalTaxes = reader.GetDecimal(19),
+                            CurrencyCode = reader.IsDBNull(20) ? null : reader.GetString(20),
+                            ControlNumber = reader.IsDBNull(21) ? null : reader.GetString(21),
+                            Status = reader.GetString(22),
+                            OrdersLines = [], 
+                            OrdersTotals = null 
+                        };
+                        ordersTableData.Add(order);
+                        ordersMap.Add(order.OrderNumber, order);
+                    }
+
+                    // 2. Mover al siguiente conjunto de resultados (OrdersLines)
+                    await reader.NextResultAsync();
+
+                    // Leer las líneas de órdenes y asignarlas a sus respectivos encabezados
+                    while (await reader.ReadAsync())
+                    {
+                        string currentOrderNumber = reader.GetString(3); // El OrderNumber de la línea
+
+                        if (ordersMap.TryGetValue(currentOrderNumber, out var orderHeader))
+                        {
+                            var orderLine = new OrdersLinesDto
+                            {
+                                Id = reader.GetInt32(0),
+                                CreatedAt = reader.GetDateTime(1),
+                                UpdatedAt = reader.GetDateTime(2),
+                                OrderNumber = reader.GetString(3),
+                                LineNum = reader.GetInt32(4),
+                                ItemId = reader.GetString(5),
+                                ItemName = reader.GetString(6),
+                                Unit = reader.IsDBNull(7) ? null : reader.GetString(7),
+                                Quantity = reader.GetInt32(8),
+                                Kgs = reader.GetDecimal(9),
+                                TotalKgs = reader.GetDecimal(10),
+                                UnitPrice = reader.GetDecimal(11),
+                                TotalAmount = reader.GetDecimal(12),
+                                TaxCode = reader.IsDBNull(13) ? null : reader.GetString(13),
+                                TaxValue = reader.IsDBNull(14) ? null : reader.GetDecimal(14),
+                                TaxAmount = reader.IsDBNull(15) ? null : reader.GetDecimal(15),
+                                DiscAmount = reader.IsDBNull(16) ? null : reader.GetDecimal(16),
+                                DiscPercent = reader.IsDBNull(17) ? null : reader.GetDecimal(17),
+                                Status = reader.GetString(18)
+                            };
+                            orderHeader.OrdersLines.Add(orderLine);
+                        }
+                    }
+
+                    // 3. Mover al siguiente conjunto de resultados (OrdersTotals)
+                    await reader.NextResultAsync();
+
+                    // Leer los totales de órdenes y asignarlos a sus respectivos encabezados
+                    while (await reader.ReadAsync())
+                    {
+                        string currentOrderNumber = reader.GetString(3); // El OrderNumber del total
+
+                        if (ordersMap.TryGetValue(currentOrderNumber, out var orderHeader))
+                        {
+                            var orderTotals = new OrdersTotalsDto
+                            {
+                                Id = reader.GetInt32(0),
+                                CreatedAt = reader.GetDateTime(1),
+                                UpdatedAt = reader.GetDateTime(2),
+                                OrderNumber = reader.GetString(3),
+                                TotalKgs = reader.GetDecimal(4),
+                                Subtotal = reader.GetDecimal(5),
+                                DiscPrice = reader.GetDecimal(6),
+                                BaseTaxable = reader.GetDecimal(7),
+                                TotalTax = reader.GetDecimal(8),
+                                TotalToPay = reader.GetDecimal(9),
+                                Observs = reader.IsDBNull(10) ? null : reader.GetString(10),
+                            };
+                            orderHeader.OrdersTotals = orderTotals; // Asignar el objeto de totales
+                        }
+                    }
+
+                    // 4. Mover al cuarto conjunto de resultados (TotalCount)
+                    // Se espera que este result set siempre exista y contenga una única fila con el TotalCount.
+                    await reader.NextResultAsync();
+                    if (await reader.ReadAsync())
+                    {
+                        totalCount = reader.GetInt32(0); // El conteo total estará en la primera columna
+                    }
+                }
+
+                // Devolver la respuesta paginada
+                return new PagedResponseDto<OrdersTableDto>
+                {
+                    Data = ordersTableData,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
                 };
             }
-
-            if (ordersTable != null)
+            catch (Exception ex)
             {
-                await reader.NextResultAsync();
+                throw new Exception("Error al obtener los datos de órdenes (paginación): " + ex.Message, ex);
+            }
+        }
 
-                while (await reader.ReadAsync())
+        public async Task<OrdersTableDto?> GetByOrderNumber(string orderNumber)
+        {
+            try
+            {
+                OrdersTableDto? ordersTable = null;
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+
+                await cnn.OpenAsync();
+
+                SqlCommand cmd = new("sp_GetOrdersTableByOrderNumber", cnn)
                 {
-                    var orderLine = new OrdersLinesDto
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@OrderNumber", orderNumber);
+
+                var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    ordersTable = new OrdersTableDto
                     {
                         Id = reader.GetInt32(0),
                         CreatedAt = reader.GetDateTime(1),
                         UpdatedAt = reader.GetDateTime(2),
                         OrderNumber = reader.GetString(3),
-                        LineNum = reader.GetInt32(4),
-                        ItemId = reader.GetString(5),
-                        ItemName = reader.GetString(6),
-                        Unit = reader.IsDBNull(7) ? null : reader.GetString(7),
-                        Quantity = reader.GetInt32(8),
-                        Kgs = reader.GetDecimal(9),
-                        TotalKgs = reader.GetDecimal(10),
-                        UnitPrice = reader.GetDecimal(11),
-                        TotalAmount = reader.GetDecimal(12),
-                        TaxCode = reader.IsDBNull(13) ? null : reader.GetString(13),
-                        TaxValue = reader.IsDBNull(14) ? null : reader.GetDecimal(14),
-                        TaxAmount = reader.IsDBNull(15) ? null : reader.GetDecimal(15),
-                        DiscAmount = reader.IsDBNull(16) ? null : reader.GetDecimal(16),
-                        DiscPercent = reader.IsDBNull(17) ? null : reader.GetDecimal(17),
-                        Status = reader.GetString(18)
+                        CustAccount = reader.GetString(4),
+                        CustRIF = reader.GetString(5),
+                        CustIdentification = reader.GetString(6),
+                        CustName = reader.GetString(7),
+                        CustAddress = reader.GetString(8),
+                        IssueDate = reader.GetDateTime(9),
+                        DueDate = reader.GetDateTime(10),
+                        SalesPersonId = reader.GetString(11),
+                        SalesPersonName = reader.GetString(12),
+                        RegionId = reader.GetString(13),
+                        RegionName = reader.GetString(14),
+                        CreditDays = reader.GetString(15),
+                        BaseTaxable = reader.GetDecimal(16),
+                        Base0 = reader.GetDecimal(17),
+                        TaxRate = reader.GetDecimal(18),
+                        TotalTaxes = reader.GetDecimal(19),
+                        CurrencyCode = reader.IsDBNull(20) ? null : reader.GetString(20),
+                        ControlNumber = reader.IsDBNull(21) ? null : reader.GetString(21),
+                        Status = reader.GetString(22),
+                        OrdersLines = []
                     };
-                    ordersTable.OrdersLines.Add(orderLine);
                 }
 
-                await reader.NextResultAsync();
-                var orderTotals = new OrdersTotalsDto
-                { 
-                    Id = reader.GetInt32(0),
-                    CreatedAt = reader.GetDateTime(1),
-                    UpdatedAt = reader.GetDateTime(2),
-                    OrderNumber = reader.GetString(3),
-                    TotalKgs = reader.GetDecimal(4),
-                    Subtotal = reader.GetDecimal(5),
-                    DiscPrice = reader.GetDecimal(6),
-                    BaseTaxable = reader.GetDecimal(7),
-                    TotalTax = reader.GetDecimal(8),
-                    TotalToPay = reader.GetDecimal(9),
-                    Observs = reader.IsDBNull(10) ? null : reader.GetString(10),
-                };
-                ordersTable.OrdersTotals = orderTotals;
-            }
+                if (ordersTable != null)
+                {
+                    await reader.NextResultAsync();
 
-            return ordersTable;
+                    while (await reader.ReadAsync())
+                    {
+                        var orderLine = new OrdersLinesDto
+                        {
+                            Id = reader.GetInt32(0),
+                            CreatedAt = reader.GetDateTime(1),
+                            UpdatedAt = reader.GetDateTime(2),
+                            OrderNumber = reader.GetString(3),
+                            LineNum = reader.GetInt32(4),
+                            ItemId = reader.GetString(5),
+                            ItemName = reader.GetString(6),
+                            Unit = reader.IsDBNull(7) ? null : reader.GetString(7),
+                            Quantity = reader.GetInt32(8),
+                            Kgs = reader.GetDecimal(9),
+                            TotalKgs = reader.GetDecimal(10),
+                            UnitPrice = reader.GetDecimal(11),
+                            TotalAmount = reader.GetDecimal(12),
+                            TaxCode = reader.IsDBNull(13) ? null : reader.GetString(13),
+                            TaxValue = reader.IsDBNull(14) ? null : reader.GetDecimal(14),
+                            TaxAmount = reader.IsDBNull(15) ? null : reader.GetDecimal(15),
+                            DiscAmount = reader.IsDBNull(16) ? null : reader.GetDecimal(16),
+                            DiscPercent = reader.IsDBNull(17) ? null : reader.GetDecimal(17),
+                            Status = reader.GetString(18)
+                        };
+                        ordersTable.OrdersLines.Add(orderLine);
+                    }
+
+                    await reader.NextResultAsync();
+                    var orderTotals = new OrdersTotalsDto
+                    {
+                        Id = reader.GetInt32(0),
+                        CreatedAt = reader.GetDateTime(1),
+                        UpdatedAt = reader.GetDateTime(2),
+                        OrderNumber = reader.GetString(3),
+                        TotalKgs = reader.GetDecimal(4),
+                        Subtotal = reader.GetDecimal(5),
+                        DiscPrice = reader.GetDecimal(6),
+                        BaseTaxable = reader.GetDecimal(7),
+                        TotalTax = reader.GetDecimal(8),
+                        TotalToPay = reader.GetDecimal(9),
+                        Observs = reader.IsDBNull(10) ? null : reader.GetString(10),
+                    };
+                    ordersTable.OrdersTotals = orderTotals;
+                }
+
+                return ordersTable;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener los datos: " + ex.Message, ex);
+            }
         }
 
         public async Task<string> Exists(string orderNumber)

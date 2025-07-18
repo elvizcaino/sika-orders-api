@@ -13,6 +13,80 @@ namespace OrdersAPI.Data.Implementations
     {
         private readonly ConnectionConfiguration _cnn = cnn.Value;
 
+        public async Task<List<ItemsDto>> GetAll()
+        {
+            List<ItemsDto> itemsData = [];
+
+            try
+            {
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                await cnn.OpenAsync();
+
+                SqlCommand cmd = new("sp_GetItems", cnn) 
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        itemsData.Add(new ItemsDto
+                        {
+                            ItemId = reader["ItemId"] != DBNull.Value ? reader["ItemId"].ToString() : null,
+                            ItemName = reader["ItemName"] != DBNull.Value ? reader["ItemName"].ToString() : null,
+                            GroupId = reader["GroupId"] != DBNull.Value ? reader["GroupId"].ToString() : null,
+                            TaxCode = reader["TaxCode"] != DBNull.Value ? reader["TaxCode"].ToString() : null,
+                            PriceUSD = reader["PriceUSD"] != DBNull.Value ? Convert.ToDecimal(reader["PriceUSD"]) : null
+                        });
+                    }
+                }
+                return itemsData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al obtener todos los artículos: " + ex.Message, ex);
+            }
+        }
+
+        public async Task<ItemsDto?> GetById(string itemId)
+        {
+            ItemsDto? itemData = null;
+
+            try
+            {
+                using var cnn = new SqlConnection(_cnn.SqlConnection);
+                await cnn.OpenAsync();
+
+                SqlCommand cmd = new("sp_GetItemByItemId", cnn) 
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@ItemId", itemId);
+
+                using (SqlDataReader reader = await cmd.ExecuteReaderAsync())
+                {
+                    if (await reader.ReadAsync())
+                    {
+                        itemData = new ItemsDto
+                        {
+                            ItemId = reader["ItemId"] != DBNull.Value ? reader["ItemId"].ToString() : null,
+                            ItemName = reader["ItemName"] != DBNull.Value ? reader["ItemName"].ToString() : null,
+                            GroupId = reader["GroupId"] != DBNull.Value ? reader["GroupId"].ToString() : null,
+                            TaxCode = reader["TaxCode"] != DBNull.Value ? reader["TaxCode"].ToString() : null,
+                            PriceUSD = reader["PriceUSD"] != DBNull.Value ? Convert.ToDecimal(reader["PriceUSD"]) : null
+                        };
+                    }
+                }
+                return itemData;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error al obtener el artículo por id ({itemId}): " + ex.Message, ex);
+            }
+        }
+
         public async Task<string> Upsert([FromBody] IEnumerable<ItemsDto> data, string userName)
         {
             string value = "";
